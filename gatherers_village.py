@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import json
+import random
+from dataclasses import dataclass
+from typing import List
 import random
 from dataclasses import dataclass
 from typing import Dict, List
@@ -46,6 +50,7 @@ def simulate(days: int = 10, ticks_per_day: int = 24) -> None:
     synergy = 0.15
     p_cap = 0.9
 
+    history: dict[str, List[float]] = {"basket": [], "hunger": [], "energy": []}
     agents: List[Agent] = [Agent(f"A{i}") for i in range(N)]
 
     for day in range(1, days + 1):
@@ -78,6 +83,24 @@ def simulate(days: int = 10, ticks_per_day: int = 24) -> None:
             f"Day {day}: basket={basket}, avg_hunger={avg_h:.1f}, avg_energy={avg_e:.1f}, "
             f"gathered={gathered}, eaten={eaten}, starvation_warnings={starv}"
         )
+        history["basket"].append(basket)
+        history["hunger"].append(avg_h)
+        history["energy"].append(avg_e)
+        field += regen
+
+    with open("village_history.json", "w", encoding="utf-8") as fh:
+        json.dump(history, fh)
+    visualize(history)
+
+
+def visualize(history: dict[str, List[float]], width: int = 50) -> None:
+    for key, values in history.items():
+        max_val = max(values) or 1
+        print(f"\n{key.capitalize()} trend:")
+        for day, val in enumerate(values, 1):
+            bar = "#" * int(val / max_val * width)
+            print(f"Day {day:2}: {bar} {val:.1f}")
+
         field += regen
 
 
