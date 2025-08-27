@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass
-from typing import List
+from typing import Dict, List
 
 
 @dataclass
@@ -94,6 +94,8 @@ def visualize(history: dict[str, List[float]], width: int = 50) -> None:
         for day, val in enumerate(values, 1):
             bar = "#" * int(val / max_val * width)
             print(f"Day {day:2}: {bar} {val:.1f}")
+
+        field += regen
 
 
 if __name__ == "__main__":
